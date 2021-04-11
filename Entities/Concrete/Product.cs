@@ -14,6 +14,7 @@ namespace Entities.Concrete
         public string QuantityPerUnit { get; set; }
         public decimal UnitPrice { get; set; }
         public short UnitsInStock { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
     }
 
 }
