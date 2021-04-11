@@ -15,6 +15,7 @@
 
         public static string AuthorizationDenied = "Yetkiniz yok";
         public static string ProductNameAlreadyExists = "Ürün ismi zaten mevcut";
+        public static string CategoryLimitExceeded = "Kategori sınırı aşıldı.";
 
     }
 }

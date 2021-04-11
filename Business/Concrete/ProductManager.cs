@@ -34,16 +34,15 @@ namespace Business.Concrete
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
         }
 
-        [PerformanceAspect(5)]
+        //[PerformanceAspect(5)]
         public IDataResult<List<Product>> GetList()
         {
-            Thread.Sleep(5000);
             return new SuccessDataResult<List<Product>>(_productDal.GetList().ToList());
         }
 
         [SecuredOperation("Product.List,Admin")]
         [LogAspect(typeof(FileLogger))]
-        [CacheAspect(duration: 10)]
+        //[CacheAspect(duration: 10)]
         public IDataResult<List<Product>> GetListByCategory(int categoryId)
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetList(p => p.CategoryId == categoryId).ToList());
@@ -51,10 +50,13 @@ namespace Business.Concrete
 
 
         [ValidationAspect(typeof(ProductValidator), Priority = 1)]
-        [CacheRemoveAspect("IProductService.Get")]
+        [SecuredOperation("Product.List,Admin")]
         public IResult Add(Product product)
         {
-            IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName),CheckIfCategoryIsEnabled());
+            IResult result = BusinessRules.Run(
+                CheckIfProductNameExists(product.ProductName)
+                //,CheckIfCategoryIsEnabled()
+                );
 
             if (result != null)
             {
@@ -79,9 +81,9 @@ namespace Business.Concrete
         private IResult CheckIfCategoryIsEnabled()
         {
             var result = _categoryService.GetList();
-            if (result.Data.Count<10)
+            if (result.Data.Count>5)
             {
-                return new ErrorResult(Messages.ProductNameAlreadyExists);
+                return new ErrorResult(Messages.CategoryLimitExceeded);
             }
 
             return new SuccessResult();
